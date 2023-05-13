@@ -1,3 +1,7 @@
 {
-  "extends": ["@kriszu/eslint-config"]
+  "extends": ["@kriszu/eslint-config"],
+  "rules": {
+    "brace-style": "off",
+    "@typescript-eslint/brace-style": "off"
+  }
 }
