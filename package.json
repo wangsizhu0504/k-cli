@@ -1,6 +1,6 @@
 {
   "name": "@kriszu/wi",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "pnpm@8.0.0",
   "description": "Use the right package manager",
   "author": "Kriszu <wangsizhu0504@outlook.com>",
