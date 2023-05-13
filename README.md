@@ -1,2 +1,3 @@
-# k-cli
-cli tools
+# wi
+
+自动选择包管理工具

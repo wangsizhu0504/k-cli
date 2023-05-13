@@ -1,0 +1,71 @@
+{
+  "name": "@kriszu/ki",
+  "type": "module",
+  "version": "0.0.1",
+  "author": "Kriszu <wangsizhu0504@outlook.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/wangsizhu0504/ki#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangsizhu0504/ki.git"
+  },
+  "bugs": "https://github.com/wangsizhu0504/ki/issues",
+  "keywords": [
+    "cli",
+    "kriszu"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "unbuild --stub",
+    "build": "pnpm run clean && pnpm run compile",
+    "clean": "rimraf ./dist",
+    "compile": "unbuild",
+    "prepublishOnly": "pnpm run build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "release": "bumpp && npm publish",
+    "start": "esno src/index.ts",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "qs": "^6.11.1"
+  },
+  "devDependencies": {
+    "@kriszu/eslint-config": "^1.0.11",
+    "@types/lodash-es": "^4.17.7",
+    "@types/node": "^18.16.4",
+    "@types/qs": "^6.9.7",
+    "bumpp": "^9.1.0",
+    "eslint": "^8.39.0",
+    "esno": "^0.16.3",
+    "rimraf": "^5.0.0",
+    "unbuild": "^1.2.1",
+    "vitest": "^0.30.1"
+  }
+}
