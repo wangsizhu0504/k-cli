@@ -74,3 +74,7 @@ export const parseNun = <Runner>((agent, args) => {
     return getCommand(agent, 'global_uninstall', exclude(args, '-g'))
   return getCommand(agent, 'uninstall', args)
 })
+
+export const parseNa = <Runner>((agent, args) => {
+  return getCommand(agent, 'agent', args)
+})

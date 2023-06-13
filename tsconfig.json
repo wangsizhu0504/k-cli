@@ -1,25 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2017",
     "module": "esnext",
-    "lib": ["ESNext"],
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
+    "lib": ["esnext"],
     "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
     "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "skipDefaultLibCheck": true
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "resolveJsonModule": true
+  }
 }

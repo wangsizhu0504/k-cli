@@ -58,6 +58,7 @@ export async function run(fn: Runner, args: string[], options: DetectOptions = {
     console.log(`nr   ${dash}  run`)
     console.log(`nu   ${dash}  upgrade`)
     console.log(`nun  ${dash}  uninstall`)
+    console.log(`na   ${dash}  agent alias`)
     return
   }
 

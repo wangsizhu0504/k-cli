@@ -1,3 +1,3 @@
-import { parseNun, runCli } from '../core'
+import { parseNun, runCli } from '../index'
 
 runCli(parseNun)

@@ -1,19 +1,9 @@
 {
   "name": "@kriszu/ni",
-  "version": "0.0.3",
-  "packageManager": "pnpm@8.0.0",
+  "version": "1.0.0",
+  "packageManager": "pnpm@8.6.1",
   "description": "Use the right package manager",
-  "author": "Kriszu <wangsizhu0504@outlook.com>",
   "license": "MIT",
-  "homepage": "https://github.com/wangsizhu0504/ni#readme",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "cli",
-    "kriszu"
-  ],
-  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -28,6 +18,7 @@
     "ni": "bin/ni.mjs",
     "nr": "bin/nr.mjs",
     "nu": "bin/nu.mjs",
+    "na": "bin/na.mjs",
     "nun": "bin/nun.mjs"
   },
   "files": [
@@ -35,24 +26,20 @@
     "bin"
   ],
   "scripts": {
-    "dev": "npm run build & npm link",
-    "build": "pnpm run clean && pnpm run compile",
-    "clean": "rimraf ./dist",
-    "compile": "unbuild",
-    "prepublishOnly": "pnpm run build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run build",
+    "dev": "esno src/commands/ni.ts",
+    "nr": "esno src/commands/nr.ts",
+    "build": "unbuild",
+    "stub": "unbuild --stub",
     "release": "bumpp && npm publish",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "prepublish:cli": "npm run build"
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "@kriszu/eslint-config": "^1.0.11",
+    "@kriszu/eslint-config": "^1.0.14",
     "@posva/prompts": "^2.4.4",
     "@types/fs-extra": "^11.0.1",
     "@types/ini": "^1.3.31",
-    "@types/node": "^18.16.16",
+    "@types/node": "^20.3.1",
     "@types/which": "^3.0.0",
     "bumpp": "^9.1.1",
     "eslint": "^8.42.0",

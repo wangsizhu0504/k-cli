@@ -2,7 +2,9 @@ import type { Choice } from '@posva/prompts'
 import prompts from '@posva/prompts'
 import c from 'kleur'
 import { Fzf } from 'fzf'
-import { dump, getPackageJSON, load, parseNr, runCli } from '../core'
+import { dump, load } from '../core/storage'
+import { getPackageJSON } from '../core/fs'
+import { parseNr, runCli } from '../index'
 
 runCli(async (agent, args, ctx) => {
   const storage = await load()
