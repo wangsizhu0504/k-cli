@@ -1,70 +1,74 @@
-import path from 'node:path'
 import fs from 'node:fs'
+import path from 'node:path'
+import { execaCommand } from 'execa'
 import { findUp } from 'find-up'
 import terminalLink from 'terminal-link'
-import { execaCommand } from 'execa'
-import prompts from 'prompts'
-import { AGENTS, INSTALL_PAGE, LOCKS } from './enums'
-import { cmdExists } from './util'
-import type { Agent } from './enums'
-import type { DetectOptions } from './type'
+import prompts from '@posva/prompts'
+import type { Agent } from './agents'
+import { AGENTS, INSTALL_PAGE, LOCKS } from './agents'
+import { cmdExists } from './utils'
 
-export async function detect({ autoInstall, cwd }: DetectOptions) {
+export interface DetectOptions {
+  autoInstall?: boolean
+  programmatic?: boolean
+  cwd?: string
+}
+
+export async function detect({ autoInstall, programmatic, cwd }: DetectOptions = {}) {
   let agent: Agent | null = null
-  const lockFilePath = await findUp(Object.keys(LOCKS), { cwd })
-  // package.json path
+  let version: string | null = null
+
+  const lockPath = await findUp(Object.keys(LOCKS), { cwd })
   let packageJsonPath: string | undefined
 
-  if (lockFilePath)
-    packageJsonPath = path.resolve(lockFilePath, '../package.json')
-  else packageJsonPath = await findUp('package.json', { cwd })
+  if (lockPath)
+    packageJsonPath = path.resolve(lockPath, '../package.json')
+  else
+    packageJsonPath = await findUp('package.json', { cwd })
 
+  // read `packageManager` field in package.json
   if (packageJsonPath && fs.existsSync(packageJsonPath)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-
-      // pnpm@6.0
       if (typeof pkg.packageManager === 'string') {
-        const [name, version] = pkg.packageManager.split('@')
-
-        // yarn 2.x ==> yarn@berry
-        if (name === 'yarn' && parseInt(version) > 1)
+        const [name, ver] = pkg.packageManager.split('@')
+        version = ver
+        if (name === 'yarn' && Number.parseInt(ver) > 1)
           agent = 'yarn@berry'
-        // pnpm6.x
-        else if (name === 'pnpm' && parseInt(version) < 7)
+        else if (name === 'pnpm' && Number.parseInt(ver) < 7)
           agent = 'pnpm@6'
         else if (name in AGENTS)
           agent = name
-        else console.warn('[wi] 无法识别的包管理工具', pkg.packageManager)
+        else if (!programmatic)
+          console.warn('[ni] Unknown packageManager:', pkg.packageManager)
       }
-    } catch (error) {}
+    }
+    catch {}
   }
 
-  // 根据lockFile定位agent
-  if (!agent && lockFilePath)
-    agent = LOCKS[path.basename(lockFilePath)]
+  // detect based on lock
+  if (!agent && lockPath)
+    agent = LOCKS[path.basename(lockPath)]
 
-  // autoInstall:false，判断本地是否无环境，无则提示是否全局安装对应的环境
-  if (agent && !cmdExists(agent.split('@')[0])) {
+  // auto install
+  if (agent && !cmdExists(agent.split('@')[0]) && !programmatic) {
     if (!autoInstall) {
-      console.warn(
-        `[wi] Detected ${agent} but it doesn't seem to be installed.\n`,
-      )
+      console.warn(`[ni] Detected ${agent} but it doesn't seem to be installed.\n`)
 
       if (process.env.CI)
         process.exit(1)
 
       const link = terminalLink(agent, INSTALL_PAGE[agent])
-
       const { tryInstall } = await prompts({
         name: 'tryInstall',
         type: 'confirm',
-        message: `你希望全局安装 ${link} 吗?`,
+        message: `Would you like to globally install ${link}?`,
       })
       if (!tryInstall)
         process.exit(1)
     }
-    await execaCommand(`npm i -g ${agent}`, { stdio: 'inherit', cwd })
+
+    await execaCommand(`npm i -g ${agent}${version ? `@${version}` : ''}`, { stdio: 'inherit', cwd })
   }
 
   return agent

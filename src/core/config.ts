@@ -1,66 +1,54 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { findUp } from 'find-up'
 import ini from 'ini'
-import { LOCKS } from './enums'
-import type { Agent } from './enums'
+import { findUp } from 'find-up'
+import type { Agent } from './agents'
+import { LOCKS } from './agents'
+
+const customRcPath = process.env.NI_CONFIG_FILE
+
+const home = process.platform === 'win32'
+  ? process.env.USERPROFILE
+  : process.env.HOME
+
+const defaultRcPath = path.join(home || '~/', '.nirc')
+
+const rcPath = customRcPath || defaultRcPath
 
 interface Config {
-  currentAgent: Agent | 'prompt'
+  defaultAgent: Agent | 'prompt'
   globalAgent: Agent
 }
 
 const defaultConfig: Config = {
-  currentAgent: 'prompt',
+  defaultAgent: 'prompt',
   globalAgent: 'npm',
 }
 
-const home = process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME
-// 配置文件默认地址为 ~/.zirc
-const defaultRCPath = path.join(home || '~/', '.wirc')
-const customRCPath = process.env.WI_CONFIG_FILE
-
-const rcPath = customRCPath || defaultRCPath
-
 let config: Config | undefined
 
-// 根据不同的配置文件定位 agent
 export async function getConfig(): Promise<Config> {
   if (!config) {
-    const result = (await findUp('package.json')) || ''
+    const result = await findUp('package.json') || ''
     let packageManager = ''
-
-    // packageManager: pnpm@7.0.0
     if (result)
       packageManager = JSON.parse(fs.readFileSync(result, 'utf8')).packageManager ?? ''
-
-    // parse agent/version
-    const [, agent, version]
-      = packageManager.match(
-        new RegExp(`^(${Object.values(LOCKS).join('|')})@(\d).*?$`),
-      ) || []
-
-    // 最终改写默认agent 需要额外处理 yarn 2.x
-    if (agent) {
-      config = Object.assign({}, defaultConfig, {
-        defaultAgent: (agent === 'yarn' && parseInt(version) > 1) ? 'yarn@berry' : agent,
-      })
-    }
-
-    else if (!fs.existsSync(rcPath)) {
+    const [, agent, version] = packageManager.match(new RegExp(`^(${Object.values(LOCKS).join('|')})@(\d).*?$`)) || []
+    if (agent)
+      config = Object.assign({}, defaultConfig, { defaultAgent: (agent === 'yarn' && Number.parseInt(version) > 1) ? 'yarn@berry' : agent })
+    else if (!fs.existsSync(rcPath))
       config = defaultConfig
-    } else {
+    else
       config = Object.assign({}, defaultConfig, ini.parse(fs.readFileSync(rcPath, 'utf-8')))
-    }
   }
   return config
 }
 
-export async function getDefaultAgent() {
-  const { currentAgent } = await getConfig()
-  if (currentAgent === 'prompt' && process.env.CI)
+export async function getDefaultAgent(programmatic?: boolean) {
+  const { defaultAgent } = await getConfig()
+  if (defaultAgent === 'prompt' && (programmatic || process.env.CI))
     return 'npm'
-  return currentAgent
+  return defaultAgent
 }
 
 export async function getGlobalAgent() {

@@ -1,1 +1,1 @@
-export const name = "ki"
+export * from './core'

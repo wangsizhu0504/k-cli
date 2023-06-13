@@ -1,17 +1,26 @@
-# wi
+# ni
+Forked from [antfu/ni](https://github.com/antfu/ni);
 
-**wi** - use the right package manager
+~~*`npm i` in a yarn project, again? F\*\*k!*~~
+
+**ni** - use the right package manager
+
+<br>
 
 <pre>
-npm i -g <b>@kriszu/wi</b>
+npm i -g <b>@kriszu/ni</b>
 </pre>
 
-## Usage
+<a href='https://docs.npmjs.com/cli/v6/commands/npm'>npm</a> · <a href='https://yarnpkg.com'>yarn</a> · <a href='https://pnpm.js.org/en/'>pnpm</a> · <a href='https://bun.sh/'>bun</a>
+
+
+<br>
+
 
 ### `ni` - install
 
 ```bash
-wi
+ni
 
 # npm install
 # yarn install
@@ -20,7 +29,7 @@ wi
 ```
 
 ```bash
-wi vite
+ni vite
 
 # npm i vite
 # yarn add vite
@@ -29,7 +38,7 @@ wi vite
 ```
 
 ```bash
-wi @types/node -D
+ni @types/node -D
 
 # npm i @types/node -D
 # yarn add @types/node -D
@@ -38,7 +47,7 @@ wi @types/node -D
 ```
 
 ```bash
-wi --frozen
+ni --frozen
 
 # npm ci
 # yarn install --frozen-lockfile (Yarn 1)
@@ -48,7 +57,7 @@ wi --frozen
 ```
 
 ```bash
-wi -g eslint
+ni -g eslint
 
 # npm i -g eslint
 # yarn global add eslint (Yarn 1)
@@ -60,10 +69,10 @@ wi -g eslint
 
 <br>
 
-### `wr` - run
+### `nr` - run
 
 ```bash
-wr dev --port=3000
+nr dev --port=3000
 
 # npm run dev -- --port=3000
 # yarn run dev --port=3000
@@ -72,37 +81,24 @@ wr dev --port=3000
 ```
 
 ```bash
-wr
+nr
 
 # interactively select the script to run
 # supports https://www.npmjs.com/package/npm-scripts-info convention
 ```
 
 ```bash
-wr -
+nr -
 
 # rerun the last command
 ```
 
 <br>
 
-### `wlx` - download & execute
+### `nu` - upgrade
 
 ```bash
-wlx vitest
-
-# npx vitest
-# yarn dlx vitest
-# pnpm dlx vitest
-# bunx vitest
-```
-
-<br>
-
-### `wu` - upgrade
-
-```bash
-wu
+nu
 
 # (not available for bun)
 # npm upgrade
@@ -112,7 +108,7 @@ wu
 ```
 
 ```bash
-wu -i
+nu -i
 
 # (not available for npm & bun)
 # yarn upgrade-interactive (Yarn 1)
@@ -122,10 +118,10 @@ wu -i
 
 <br>
 
-### `wun` - uninstall
+### `nun` - uninstall
 
 ```bash
-wun webpack
+nun webpack
 
 # npm uninstall webpack
 # yarn remove webpack
@@ -134,7 +130,7 @@ wun webpack
 ```
 
 ```bash
-wun -g silent
+nun -g silent
 
 # npm uninstall -g silent
 # yarn global remove silent
@@ -144,11 +140,19 @@ wun -g silent
 
 <br>
 
+### Change Directory
+
+```bash
+ni -C packages/foo vite
+nr -C playground dev
+```
+
+<br>
 
 ### Config
 
 ```ini
-; ~/.wirc
+; ~/.nirc
 
 ; fallback when no lock found
 defaultAgent=npm # default "prompt"
@@ -161,7 +165,7 @@ globalAgent=npm
 # ~/.bashrc
 
 # custom configuration file path
-export NI_CONFIG_FILE="$HOME/.config/wi/wirc"
+export NI_CONFIG_FILE="$HOME/.config/ni/nirc"
 ```
 
 <br>

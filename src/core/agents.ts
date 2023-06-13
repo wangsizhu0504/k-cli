@@ -1,7 +1,9 @@
-const npmRun = (agent: string) => (args: string[]) => {
-  if (args.length > 1)
-    return `${agent} run ${args[0]} -- ${args.slice(1).join(' ')}`
-  else return `${agent} run ${args[0]}`
+function npmRun(agent: string) {
+  return (args: string[]) => {
+    if (args.length > 1)
+      return `${agent} run ${args[0]} -- ${args.slice(1).join(' ')}`
+    else return `${agent} run ${args[0]}`
+  }
 }
 
 const yarn = {
@@ -13,7 +15,7 @@ const yarn = {
   'add': 'yarn add {0}',
   'upgrade': 'yarn upgrade {0}',
   'upgrade-interactive': 'yarn upgrade-interactive {0}',
-  'execute': 'yarn dlx {0}',
+  'execute': 'npx {0}',
   'uninstall': 'yarn remove {0}',
   'global_uninstall': 'yarn global remove {0}',
 }
@@ -29,6 +31,19 @@ const pnpm = {
   'execute': 'pnpm dlx {0}',
   'uninstall': 'pnpm remove {0}',
   'global_uninstall': 'pnpm remove --global {0}',
+}
+const bun = {
+  'agent': 'bun {0}',
+  'run': 'bun run {0}',
+  'install': 'bun install {0}',
+  'frozen': 'bun install --no-save',
+  'global': 'bun add -g {0}',
+  'add': 'bun add {0}',
+  'upgrade': null,
+  'upgrade-interactive': null,
+  'execute': 'bunx {0}',
+  'uninstall': 'bun remove {0}',
+  'global_uninstall': 'bun remove -g {0}',
 }
 
 export const AGENTS = {
@@ -51,7 +66,8 @@ export const AGENTS = {
     'frozen': 'yarn install --immutable',
     'upgrade': 'yarn up {0}',
     'upgrade-interactive': 'yarn up -i {0}',
-    // yarn3 removed 'global', see https://github.com/yarnpkg/berry/issues/821
+    'execute': 'yarn dlx {0}',
+    // Yarn 2+ removed 'global', see https://github.com/yarnpkg/berry/issues/821
     'global': 'npm i -g {0}',
     'global_uninstall': 'npm uninstall -g {0}',
   },
@@ -61,6 +77,7 @@ export const AGENTS = {
     ...pnpm,
     run: npmRun('pnpm'),
   },
+  'bun': bun,
 }
 
 export type Agent = keyof typeof AGENTS
@@ -68,7 +85,9 @@ export type Command = keyof typeof AGENTS.npm
 
 export const agents = Object.keys(AGENTS) as Agent[]
 
+// the order here matters, more specific one comes first
 export const LOCKS: Record<string, Agent> = {
+  'bun.lockb': 'bun',
   'pnpm-lock.yaml': 'pnpm',
   'yarn.lock': 'yarn',
   'package-lock.json': 'npm',
@@ -76,9 +95,10 @@ export const LOCKS: Record<string, Agent> = {
 }
 
 export const INSTALL_PAGE: Record<Agent, string> = {
-  'pnpm': 'https://pnpm.js.org/en/installation',
-  'pnpm@6': 'https://pnpm.js.org/en/installation',
+  'bun': 'https://bun.sh',
+  'pnpm': 'https://pnpm.io/installation',
+  'pnpm@6': 'https://pnpm.io/6.x/installation',
   'yarn': 'https://classic.yarnpkg.com/en/docs/install',
   'yarn@berry': 'https://yarnpkg.com/getting-started/install',
-  'npm': 'https://www.npmjs.com/get-npm',
+  'npm': 'https://docs.npmjs.com/cli/v8/configuring-npm/install',
 }
